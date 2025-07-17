@@ -65,6 +65,27 @@ let imagesLoaded = 0;
     ctx.drawImage(image, x, y);
   }
 
+  // use essa função pra desenhar uma imagem cortada na tela
+  function DrawImageFrame(x, y, sourceImage, frameWidth, frameHeight, FrameIndex)
+  {
+    const cols = Math.floor(sourceImage.width / frameWidth);
+    const sx = (FrameIndex % cols)*frameWidth;
+    const sy = Math.floor(FrameIndex / cols) * frameHeight;
+
+    ctx.drawImage(sourceImage, sx, sy, frameWidth, frameHeight, x,y,frameWidth, frameHeight);
+  }
+
+
+  // use essa função pra desenhar texto na tela
+  function DrawText(x,y,sourceImage,text,charSize,StarCharASCIICode)
+  {
+    for(let i = 0; i < text.length; i++)
+    {
+      const FrameIndex = text.charCodeAt(i) - StarCharASCIICode;
+      DrawImageFrame(x + i*charSize, y, sourceImage, charSize, charSize, FrameIndex);
+    }
+  }
+
 
 
   // game loop
@@ -72,6 +93,10 @@ let imagesLoaded = 0;
   {
 
     DrawImage(0, 0, tutorialImage);
+
+    DrawImageFrame(0,0,whitefontImage,16,16,65-32);
+    DrawText(0,18,greenfontImage,"Eu gosto de programar",16,32);
+    DrawText(0,36,greenfontImage,"C++ é muito bom",16,32);
 
     requestAnimationFrame(gameLoop);
   }
