@@ -5,6 +5,13 @@ const ctx = canvas.getContext('2d');
 const FPS = 16;
 const FRAME_DURATION = 1000 / FPS;
 
+let MENU = 0;
+let TUTORIAL = 1;
+let ABOUT = 2;
+let PAUSE = 3;
+let GAME = 4;
+let game_estado = MENU;
+
 
 const blackfontImage = new Image();
 const bluefontImage = new Image();
@@ -97,6 +104,104 @@ let imagesLoaded = 0;
   }
 
 
+const cursor = {x: 0, y: 0};
+
+  let tecla = null;
+  window.addEventListener('keydown', function(event)
+  {
+  tecla = event.key;
+});
+
+
+  let index = 0; // pra mudar a posição do cursor do menu
+
+  // use essa função pra desenhar e controlar o menu na tela
+function DrawMenuAndUpdateMenu()
+{
+    const options = ["Jogar", "Tutorial", "Sobre", "Sair"];
+
+    const NumberOfNames = options.length;
+
+    let dist = 30;
+    let x = 0;
+    let y = 0;
+    let NumberOfLetters = 0;
+    cursor.x = 0;
+    cursor.y = 0;
+
+    // programação do teclado
+    if(tecla === 'ArrowUp')
+    {
+        index = index-1;
+        tecla = null;
+    }
+
+    if(tecla === 'ArrowDown')
+    {
+        index = index+1;
+        tecla = null;
+    }
+
+    if(index > NumberOfNames - 1)
+    {
+        index = 0;
+    }
+
+    if(index < 0)
+    {
+        index = NumberOfNames - 1;
+    }
+
+    if(index == 0 && tecla === 'enter')
+    {
+        game_estado = GAME;
+        tecla = null;
+    }
+
+    if(index == 1 && tecla === 'enter')
+    {
+        game_estado = TUTORIAL;
+        tecla = null;
+    }
+
+    if(index == 2 && tecla === 'enter')
+    {
+        game_estado = ABOUT;
+        tecla = null;
+    }
+
+    if(index == 3 && tecla === 'enter')
+    {
+        // fecha o programa
+        //executando = false;
+      tecla = null;
+    }
+
+    for(let i = 0; i < NumberOfNames; i++)
+    {
+        NumberOfLetters = options[i].length;;
+
+        x = (canvas.width - 16*NumberOfLetters)/2;
+        y = 120;
+
+        // valor selecionado
+        if(index == i)
+        {
+            cursor.x = 45;
+            cursor.y = y + (dist*i)-2;
+            DrawImage(cursor.x,cursor.y,cursorImage);
+            DrawText(x, y+(dist*i), bluefontImage, options[i], 16, 32);
+        }
+
+        // valor não selecionado
+        else
+        {
+            DrawText(x, y+(dist*i), greyfontImage, options[i], 16, 32);
+        }
+    }
+}
+
+
 
   // game loop
   function gameLoop()
@@ -105,12 +210,7 @@ let imagesLoaded = 0;
 
     ClearScreen();
 
-    const textos = ["Jogar", "Tutorial", "Sair"];
-
-    for(let i = 0; i < 3; i++)
-    {
-      DrawText(80,20+(i*16),greenfontImage,textos[i],16,32);
-    }
+    DrawMenuAndUpdateMenu();
 
 
     setTimeout(gameLoop, FRAME_DURATION);
