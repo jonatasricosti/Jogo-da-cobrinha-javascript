@@ -2,6 +2,10 @@ const canvas = document.getElementById('Janela');
 const ctx = canvas.getContext('2d');
 
 
+const FPS = 16;
+const FRAME_DURATION = 1000 / FPS;
+
+
 const blackfontImage = new Image();
 const bluefontImage = new Image();
 const greenfontImage = new Image();
@@ -58,6 +62,12 @@ let imagesLoaded = 0;
 
   LoadFiles();
 
+  // use essa função pra limpar a tela
+  function ClearScreen()
+  {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
 
   // // use essa função pra desenhar uma imagem na tela
   function DrawImage(x, y, image)
@@ -92,11 +102,16 @@ let imagesLoaded = 0;
   function gameLoop()
   {
 
-    DrawImage(0, 0, tutorialImage);
 
-    DrawImageFrame(0,0,whitefontImage,16,16,65-32);
-    DrawText(0,18,greenfontImage,"Eu gosto de programar",16,32);
-    DrawText(0,36,greenfontImage,"C++ é muito bom",16,32);
+    ClearScreen();
 
-    requestAnimationFrame(gameLoop);
+    const textos = ["Jogar", "Tutorial", "Sair"];
+
+    for(let i = 0; i < 3; i++)
+    {
+      DrawText(80,20+(i*16),greenfontImage,textos[i],16,32);
+    }
+
+
+    setTimeout(gameLoop, FRAME_DURATION);
   }
