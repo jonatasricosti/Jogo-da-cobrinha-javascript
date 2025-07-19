@@ -50,7 +50,7 @@ let imagesLoaded = 0;
 
 
   // use essa função pra carregar arquivos
-  // nota: essa função só deve ser chamada no começo do program
+  // nota: essa função só deve ser chamada no começo do programa
   function LoadFiles()
   {
 
@@ -152,25 +152,25 @@ function DrawMenuAndUpdateMenu()
         index = NumberOfNames - 1;
     }
 
-    if(index == 0 && tecla === 'enter')
+    if(index == 0 && tecla === 'Enter')
     {
         game_estado = GAME;
         tecla = null;
     }
 
-    if(index == 1 && tecla === 'enter')
+    if(index == 1 && tecla === 'Enter')
     {
         game_estado = TUTORIAL;
         tecla = null;
     }
 
-    if(index == 2 && tecla === 'enter')
+    if(index == 2 && tecla === 'Enter')
     {
         game_estado = ABOUT;
         tecla = null;
     }
 
-    if(index == 3 && tecla === 'enter')
+    if(index == 3 && tecla === 'Enter')
     {
         // fecha o programa
         //executando = false;
@@ -179,7 +179,7 @@ function DrawMenuAndUpdateMenu()
 
     for(let i = 0; i < NumberOfNames; i++)
     {
-        NumberOfLetters = options[i].length;;
+        NumberOfLetters = options[i].length;
 
         x = (canvas.width - 16*NumberOfLetters)/2;
         y = 120;
@@ -202,16 +202,102 @@ function DrawMenuAndUpdateMenu()
 }
 
 
+// desenha o tutorial na tela
+function DrawTutorial()
+{
+    DrawImage(0,0,tutorialImage);
+}
+
+// os comandos do tutorial
+function updateTutorial()
+{
+
+    if(tecla === 'Escape')
+    {
+      game_estado = MENU;
+      tecla = null;
+    }
+}
+
+// desenha o about na tela
+function DrawAbout()
+{
+    DrawText(0,0,whitefontImage, "Jogo da cobrinha", 16, 32);
+    DrawText(0,32,whitefontImage, "Feito por", 16, 32);
+    DrawText(0,64,whitefontImage, "Jonatas Ricosti", 16, 32);
+    DrawText(0,96,whitefontImage, "Audio: Koops", 16, 32);
+}
+
+// os comandos de about
+function updateAbout()
+{
+    if(tecla === 'Escape')
+    {
+      game_estado = MENU;
+      tecla = null;
+    }
+}
+
+
+function DrawGame()
+{
+
+}
+
+// desenha o pause na tela
+function DrawPause()
+{
+    DrawGame();
+    DrawText(110,110,whitefontImage, "Pause", 16,32);
+}
+
+
+function UpdateGame()
+{
+}
+
+function CollideWithSnake()
+{
+
+}
+
+
+// use essa função pra trocar as telas do jogo
+// nota: essa função deve ser respaldada
+// pois ela é responsável por dar vida ao jogo
+function RunGame()
+{
+    switch(game_estado)
+    {
+        case MENU: DrawMenuAndUpdateMenu(); break;
+        case TUTORIAL: DrawTutorial(); updateTutorial(); break;
+        case ABOUT: DrawAbout(); updateAbout(); break;
+        case PAUSE: DrawPause(); break;
+        case GAME: DrawGame(); UpdateGame(); CollideWithSnake(); break;
+    }
+}
+
+
 
   // game loop
   function gameLoop()
   {
 
+    if(game_estado == GAME && tecla === 'Escape')
+    {
+      game_estado = PAUSE;
+      tecla = null;
+    }
+
+    else if(game_estado == PAUSE && tecla === 'Escape')
+    {
+      game_estado = GAME;
+      tecla = null;
+    }
+      
 
     ClearScreen();
-
-    DrawMenuAndUpdateMenu();
-
+    RunGame();
 
     setTimeout(gameLoop, FRAME_DURATION);
   }
