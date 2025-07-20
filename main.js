@@ -2,9 +2,11 @@ const canvas = document.getElementById('Janela');
 const ctx = canvas.getContext('2d');
 
 
+// para o framerate
 const FPS = 16;
 const FRAME_DURATION = 1000 / FPS;
 
+// os estados de tela do jogo
 let MENU = 0;
 let TUTORIAL = 1;
 let ABOUT = 2;
@@ -67,8 +69,6 @@ let imagesLoaded = 0;
     cursorImage.src   = 'gfx/cursor.png';
   }
 
-  LoadFiles();
-
   // use essa função pra limpar a tela
   function ClearScreen()
   {
@@ -76,7 +76,7 @@ let imagesLoaded = 0;
   }
 
 
-  // // use essa função pra desenhar uma imagem na tela
+  // use essa função pra desenhar uma imagem na tela
   function DrawImage(x, y, image)
   {
     ctx.drawImage(image, x, y);
@@ -104,6 +104,7 @@ let imagesLoaded = 0;
   }
 
 
+// esse objeto representa o cursor do menu
 const cursor = {x: 0, y: 0};
 
   let tecla = null;
@@ -115,7 +116,7 @@ const cursor = {x: 0, y: 0};
 
   let index = 0; // pra mudar a posição do cursor do menu
 
-  // use essa função pra desenhar e controlar o menu na tela
+// use essa função pra desenhar e controlar o menu na tela
 function DrawMenuAndUpdateMenu()
 {
     const options = ["Jogar", "Tutorial", "Sobre", "Sair"];
@@ -239,9 +240,57 @@ function updateAbout()
 }
 
 
+// desenha o background na tela
+function DrawBackground()
+{
+    DrawImage(0,0,fundoImage);
+}
+
+
+// esse objeto representa a comida da cobrinha, ou seja, a maça
+const apple = {x: 0, y: 0};
+
+let rectW = 10;
+let rectH = 10;
+
+// inicia a posição da comida em lugar aleatório
+function PlaceApple()
+{
+    let r = 0;
+
+    r = Math.floor(Math.random() * 30); // gera um número aleatório entre 0 até 29
+    apple.x = r*rectW;
+
+    r = Math.floor(Math.random() * 30); // gera um número aleatório entre 0 até 29
+    apple.y = r*rectH;
+
+    /*
+    for(int z = cobrinha.tamanho; z > 0; z--)
+    {
+        // Verifique se a comida se sobrepõe à nossa cobrinha
+        if(apple.x == cobrinha.x[z] && apple.y == cobrinha.y[z])
+        {
+            PlaceApple();
+            break;
+        }
+    }
+    */
+}
+
+// desenha a comida ou a maça na tela
+function DrawApple()
+{
+    DrawImage(apple.x,apple.y,appleImage);
+}
+
+// desenha o jogo na tela
 function DrawGame()
 {
 
+    DrawBackground();
+    //DrawHUD();
+    //DrawSnake();
+    DrawApple();
 }
 
 // desenha o pause na tela
@@ -279,6 +328,12 @@ function RunGame()
 
 
 
+  // começo do programa
+  LoadFiles();
+  PlaceApple();
+
+
+
   // game loop
   function gameLoop()
   {
@@ -299,5 +354,7 @@ function RunGame()
     ClearScreen();
     RunGame();
 
+    PlaceApple();
+    
     setTimeout(gameLoop, FRAME_DURATION);
   }
