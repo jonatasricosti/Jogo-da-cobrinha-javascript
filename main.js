@@ -246,6 +246,43 @@ function DrawBackground()
     DrawImage(0,0,fundoImage);
 }
 
+let pontos = 0;
+let record = 0;
+let playsound = 0; // decide se por tocar som ou não
+
+// esse objeto representa a cobrinha
+const snake = {x: 0, y: 0, tamanho: 0};
+
+// monstra os pontos, tamanho, record
+function DrawHUD()
+{
+    DrawText(0,301,blackfontImage, "Seus Pontos: ",16,32);
+    DrawText(200,301,greenfontImage, pontos.toString(),16,32);
+
+    DrawText(0,301+22,blackfontImage, "Seu Record: ",16,32);
+    DrawText(200,301+22,greenfontImage, record.toString(),16,32);
+
+    DrawText(0,301+2*22,blackfontImage, "Seu Tamanho: ",16,32);
+    DrawText(200,301+2*22,greenfontImage, snake.tamanho.toString(),16,32);
+
+    if(playsound == 1)
+    {
+        DrawText(0,301+3*22,blackfontImage, "Som ativado",16,32);
+    }
+
+    else if(playsound == 0)
+    {
+        DrawText(0,301+3*22,blackfontImage, "Som desativado",16,32);
+    }
+
+    if(pontos > record)
+    {
+        record = pontos;
+    }
+}
+
+
+
 
 // esse objeto representa a comida da cobrinha, ou seja, a maça
 const apple = {x: 0, y: 0};
@@ -286,9 +323,8 @@ function DrawApple()
 // desenha o jogo na tela
 function DrawGame()
 {
-
     DrawBackground();
-    //DrawHUD();
+    DrawHUD();
     //DrawSnake();
     DrawApple();
 }
@@ -353,8 +389,6 @@ function RunGame()
 
     ClearScreen();
     RunGame();
-
-    PlaceApple();
     
     setTimeout(gameLoop, FRAME_DURATION);
   }
