@@ -3,7 +3,7 @@ const ctx = canvas.getContext('2d');
 
 
 // para o framerate
-const FPS = 16;
+const FPS = 30;
 const FRAME_DURATION = 1000 / FPS;
 
 // os estados de tela do jogo
@@ -249,9 +249,20 @@ function DrawBackground()
 let pontos = 0;
 let record = 0;
 let playsound = 0; // decide se por tocar som ou não
+let rectW = 10;
+let rectH = 10;
 
 // esse objeto representa a cobrinha
-const snake = {x: 0, y: 0, tamanho: 0};
+const ALL_DOTS = 900;
+
+    let snake =
+    {
+        x: Array(ALL_DOTS),
+        y: Array(ALL_DOTS),
+        vx: rectW,
+        vy: 0,
+        size: 3
+    };
 
 // monstra os pontos, tamanho, record
 function DrawHUD()
@@ -287,8 +298,6 @@ function DrawHUD()
 // esse objeto representa a comida da cobrinha, ou seja, a maça
 const apple = {x: 0, y: 0};
 
-let rectW = 10;
-let rectH = 10;
 
 // inicia a posição da comida em lugar aleatório
 function PlaceApple()
@@ -301,17 +310,25 @@ function PlaceApple()
     r = Math.floor(Math.random() * 30); // gera um número aleatório entre 0 até 29
     apple.y = r*rectH;
 
-    /*
-    for(int z = cobrinha.tamanho; z > 0; z--)
+    
+    for(let z = snake.tamanho; z > 0; z--)
     {
         // Verifique se a comida se sobrepõe à nossa cobrinha
-        if(apple.x == cobrinha.x[z] && apple.y == cobrinha.y[z])
+        if(apple.x == snake.x[z] && apple.y == snake.y[z])
         {
             PlaceApple();
             break;
         }
     }
-    */
+}
+
+// desenha a cobrinha na tela
+function DrawSnake()
+{
+    for(let i = 0; i < snake.tamanho; i++)
+    {
+        DrawImage(snake.x[i], snake.y[i], cobrinhaImage);
+    }
 }
 
 // desenha a comida ou a maça na tela
@@ -325,7 +342,7 @@ function DrawGame()
 {
     DrawBackground();
     DrawHUD();
-    //DrawSnake();
+    DrawSnake();
     DrawApple();
 }
 
@@ -336,16 +353,103 @@ function DrawPause()
     DrawText(110,110,whitefontImage, "Pause", 16,32);
 }
 
+// inicia a posição, velocidade, tamanho da cobrinha
+function ResetGame()
+{
+    snake.tamanho = 3;
+    pontos = 0;
+    // inicia as posições da cobrinha
+    for(let i = 0; i < snake.tamanho; i++)
+    {
+        snake.x[i] = 50 - i*rectW;
+        snake.y[i] = 50;
 
+        snake.vx = rectW;
+        snake.vy = 0;
+    }
+}
+
+
+// use essa função pra física e controle do jogo
 function UpdateGame()
 {
+    // faz o corpo ir atrás da cabeça da cobrinha
+    for(let z = snake.tamanho; z > 0; z--)
+    {
+        snake.x[z] = snake.x[(z-1)];
+        snake.y[z] = snake.y[(z-1)];
+
+        // se a cabeça da cobrinha se tocar
+        if((z > 4) && (snake.x[0] == snake.x[z]) && (snake.y[0] == snake.y[z]))
+        {
+            ResetGame();
+        }
+    }
+
+    // move a cabeça da cobrinha
+    snake.x[0] = snake.x[0] + snake.vx;
+    snake.y[0] = snake.y[0] + snake.vy;
+
+    if(tecla === 'ArrowLeft' && snake.vx <= 0)
+    {
+        snake.vx = -rectW;
+        snake.vy = 0;
+        tecla = null;
+    }
+
+    else if(tecla === 'ArrowRight' && snake.vx >= 0)
+    {
+        snake.vx = rectW;
+        snake.vy = 0;
+        tecla = null;
+    }
+
+    else if(tecla === 'ArrowUp' && snake.vy <= 0)
+    {
+        snake.vx = 0;
+        snake.vy = -rectH;
+        tecla = null;
+    }
+
+    else if(tecla === 'ArrowDown' && snake.vy >= 0)
+    {
+        snake.vx = 0;
+        snake.vy = rectH;
+        tecla = null;
+    }
+
+    // ativa/desativa o som
+    else if(tecla === 's')
+    {
+        playsound = !playsound;
+    }
+
+    // colisões nas bordas da tela
+    // lado esquerdo, lado direto, em cima, em baixo da tela
+    if(snake.x[0] < 0 ||
+       snake.x[0] > canvas.width - rectW ||
+       snake.y[0] < 0 ||
+       snake.y[0] > canvas.height - rectH - 100)
+    {
+        ResetGame();
+    }
 }
 
+// use essa função pra ver se a cobrinha comeu a comida
 function CollideWithSnake()
 {
-
+    // se cabeça da cobrinha colidir com a comida
+    if((snake.x[0] == apple.x) && (snake.y[0] == apple.y))
+    {
+        snake.tamanho = snake.tamanho+1;
+        pontos = pontos+1;
+        PlaceApple();
+        if(playsound == true)
+        {
+            //Mix_PlayChannel(-1, AppleSound, 0);
+        }
+    }
 }
-
 
 // use essa função pra trocar as telas do jogo
 // nota: essa função deve ser respaldada
@@ -367,6 +471,7 @@ function RunGame()
   // começo do programa
   LoadFiles();
   PlaceApple();
+  ResetGame();
 
 
 
