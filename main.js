@@ -3,7 +3,7 @@ const ctx = canvas.getContext('2d');
 
 
 // para o framerate
-const FPS = 30;
+const FPS = 16;
 const FRAME_DURATION = 1000 / FPS;
 
 // os estados de tela do jogo
@@ -68,6 +68,17 @@ let imagesLoaded = 0;
     appleImage.src    = 'gfx/apple.png';
     cursorImage.src   = 'gfx/cursor.png';
   }
+
+
+  const AppleSound = new Audio('sounds/Apple_Crunch_16.wav');
+
+  // toca som
+  function PlaySound()
+  {
+    AppleSound.currentTime = 0;
+    AppleSound.play();
+  } 
+
 
   // use essa função pra limpar a tela
   function ClearScreen()
@@ -248,7 +259,7 @@ function DrawBackground()
 
 let pontos = 0;
 let record = 0;
-let playsound = 0; // decide se por tocar som ou não
+let playsound = 0; // decide se pode tocar som ou não
 let rectW = 10;
 let rectH = 10;
 
@@ -422,6 +433,7 @@ function UpdateGame()
     else if(tecla === 's')
     {
         playsound = !playsound;
+        tecla = null;
     }
 
     // colisões nas bordas da tela
@@ -444,9 +456,9 @@ function CollideWithSnake()
         snake.tamanho = snake.tamanho+1;
         pontos = pontos+1;
         PlaceApple();
-        if(playsound == true)
+        if(playsound == 1)
         {
-            //Mix_PlayChannel(-1, AppleSound, 0);
+            PlaySound();
         }
     }
 }
